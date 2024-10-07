@@ -6,20 +6,24 @@ from routers.Graph import router as graphRouter
 from fastapi.responses import JSONResponse
 from routers.Users import router as UserRouter
 from routers.Contratistas import router as ContrastRouter
+from routers.Desviaciones import router as DesviacionRouter
 app = FastAPI()
 
 app.include_router(graphRouter)
 app.include_router(UserRouter)
 app.include_router(ContrastRouter)
+app.include_router(DesviacionRouter)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Cambia esto por los dominios permitidos en producción
+    # Cambia esto por los dominios permitidos en producción
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
-
