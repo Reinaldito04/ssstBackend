@@ -7,12 +7,23 @@ from fastapi.responses import JSONResponse
 from routers.Users import router as UserRouter
 from routers.Contratistas import router as ContrastRouter
 from routers.Desviaciones import router as DesviacionRouter
-app = FastAPI()
+from routers.Capacitacion import router as CapacitacionRouter
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
+from fastapi import HTTPException
+
+import os 
+
+
+
+app = FastAPI()
 app.include_router(graphRouter)
 app.include_router(UserRouter)
 app.include_router(ContrastRouter)
 app.include_router(DesviacionRouter)
+app.include_router(CapacitacionRouter)
+app.mount("/File", StaticFiles(directory="File"), name="File")
 
 app.add_middleware(
     CORSMiddleware,

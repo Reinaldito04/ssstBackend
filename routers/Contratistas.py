@@ -9,6 +9,62 @@ router = APIRouter(
     tags=["Contratistas"],
 )
 
+@router.get('/seguimientoContratist/{idContratist}')
+def get_contratist(idContratist: int):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT 
+            c.ID,               -- ID from Contratistas
+            c.NombreContr,    
+            cc.AnexoA,      
+            cc.AnexoB,    
+            cc.PDTART,
+            cc.Planificado,
+            cc.Ejecutado,
+            cc.Cumplimiento,
+            cc.EvalFinal
+        FROM 
+            Contratistas c
+        INNER JOIN
+            ControlContratistas cc ON c.ID = cc.IDContratistas
+        WHERE c.ID = ?
+        """,
+        (idContratist,)  # Pasamos idContratist como una tupla
+    )
+    
+    contratistas = cursor.fetchall()
+
+    # Convertir los resultados a una lista de diccionarios
+    contratists = [
+        {
+            "id": row[0],
+            "Nombre": row[1],
+            "AnexoA": row[2],
+            "AnexoB": row[3],
+            "PDTART": row[4],
+            "Planificado": row[5],
+            "Ejecutado": row[6],
+            "Cumplimiento": row[7],
+            "EvalFinal": row[8]
+        }
+        for row in contratistas
+    ]
+
+    return contratists
+
+    
+    
+
+  
+        
+        
+
+
+            
+
 
 @router.get('/consultContratist')
 def get_contratist():
