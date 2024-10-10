@@ -291,7 +291,7 @@ def agg_Contrati(contratist: Contratist):
         with get_db() as connect:
             cursor = connect.cursor()
             cursor.execute(
-                'INSERT INTO Contratistas (RIF, GerenciaContr, NombreContr, TelefonoContr, DireccionContr, CorreoContr) VALUES (?, ?, ?, ?, ?, ?)',
+                'INSERT INTO Contratistas (RIF, GerenciaContr, NombreContr, TelefonoContr, DireccionContr, EmailContr) VALUES (?, ?, ?, ?, ?, ?)',
                 (contratist.RIF, contratist.GerenciaContr, contratist.NombreContr,
                  contratist.TelefonoContr, contratist.DireccionContr, contratist.EmailContr)
             )

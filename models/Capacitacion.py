@@ -10,5 +10,9 @@ class Capacitacion(BaseModel):
     participantes : Optional [str ] 
     HP: Optional [str] 
     HE : Optional [str] 
+
+class CapacitacionResponse(Capacitacion):
+    id: int
+    Archivo : str 
      
     
