@@ -8,6 +8,7 @@ from routers.Users import router as UserRouter
 from routers.Contratistas import router as ContrastRouter
 from routers.Desviaciones import router as DesviacionRouter
 from routers.Capacitacion import router as CapacitacionRouter
+from routers.Cronograma import router as CronogramaRouter
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -23,6 +24,7 @@ app.include_router(UserRouter)
 app.include_router(ContrastRouter)
 app.include_router(DesviacionRouter)
 app.include_router(CapacitacionRouter)
+app.include_router(CronogramaRouter)
 app.mount("/File", StaticFiles(directory="File"), name="File")
 
 app.add_middleware(
