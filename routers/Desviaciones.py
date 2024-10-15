@@ -40,12 +40,12 @@ def get_resumen_desviaciones():
                 nivel_riesgo = row[2].lower()  # Convertir a minúsculas para manejarlo mejor (bajo, medio, alto)
                 desviaciones_corregidas = int(row[3])
                 porcentaje_corregidas = float(row[4]) if row[4] is not None else 0.0
-                
+
                 # Si el área ya existe, actualizamos los valores sumando
                 if area in area_data:
                     area_data[area]['desviaciones_detectadas'] += desviaciones_detectadas
                     area_data[area]['desviaciones_corregidas'] += desviaciones_corregidas
-                    area_data[area]['riesgo'][nivel_riesgo] += 1  # Sumar el riesgo al nivel correspondiente
+                    area_data[area]['riesgo'][nivel_riesgo] += desviaciones_detectadas  # Sumar desviaciones detectadas
                 else:
                     # Si no existe, creamos una nueva entrada
                     area_data[area] = {
@@ -57,7 +57,8 @@ def get_resumen_desviaciones():
                             'alto': 0
                         }
                     }
-                    area_data[area]['riesgo'][nivel_riesgo] = 1  # Sumar el primer riesgo encontrado
+                    area_data[area]['riesgo'][nivel_riesgo] = desviaciones_detectadas  # Sumar desviaciones detectadas
+
             
             # Creamos la lista final con el resumen de cada área
             resumen_data = []
