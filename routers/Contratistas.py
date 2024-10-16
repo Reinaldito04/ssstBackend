@@ -9,6 +9,45 @@ router = APIRouter(
     tags=["Contratistas"],
 )
 
+
+@router.get("/graficaContratistas")
+def grafica_contratistas():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Consulta para agrupar por mes y año, sumando planificadas y ejecutadas
+    cursor.execute("""
+        SELECT 
+            strftime('%Y-%m', cc.FechaInicio) AS MesAnio,  -- Agrupando por año y mes (YYYY-MM)
+            SUM(cc.Planificado) AS TotalPlanificado,      -- Suma de horas planificadas
+            SUM(cc.Ejecutado) AS TotalEjecutado           -- Suma de horas ejecutadas
+        FROM 
+            ControlContratistas cc
+        INNER JOIN
+            Contratistas c ON c.ID = cc.IDContratistas
+        GROUP BY 
+            strftime('%Y-%m', cc.FechaInicio)             -- Agrupación por mes y año
+        ORDER BY 
+            MesAnio ASC                                   -- Ordenar de forma ascendente
+    """)
+
+    rows = cursor.fetchall()
+
+    # Convertir los resultados a un formato legible
+    resultado = [
+        {
+            "Mes": row[0],  # Mes y año en formato YYYY-MM
+            "TotalPlanificado": row[1],  # Suma de horas planificadas
+            "TotalEjecutado": row[2],  # Suma de horas ejecutadas
+            "Cumplimiento": (row[2] / row[1]) * 100 if row[1] > 0 else 0  # Calcular el porcentaje
+        }
+        for row in rows
+    ]
+
+    conn.close()
+
+    return resultado
+
 @router.get('/seguimientoContratist/{idContratist}')
 def get_contratist(idContratist: int):
     conn = get_db()
