@@ -10,43 +10,49 @@ router = APIRouter(
 )
 
 
-@router.get("/graficaContratistas")
-def grafica_contratistas():
+@router.get("/rendimiento", response_model=List[dict])
+def get_rendimiento_contratista():
     conn = get_db()
     cursor = conn.cursor()
 
-    # Consulta para agrupar por mes y año, sumando planificadas y ejecutadas
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT 
-            strftime('%Y-%m', cc.FechaInicio) AS MesAnio,  -- Agrupando por año y mes (YYYY-MM)
-            SUM(cc.Planificado) AS TotalPlanificado,      -- Suma de horas planificadas
-            SUM(cc.Ejecutado) AS TotalEjecutado           -- Suma de horas ejecutadas
+            cc.Planificado,    -- Horas planificadas
+            cc.Ejecutado,      -- Horas ejecutadas
+            cc.EvalFinal,      -- Evaluación final
+            c.NombreContr
         FROM 
             ControlContratistas cc
-        INNER JOIN
-            Contratistas c ON c.ID = cc.IDContratistas
-        GROUP BY 
-            strftime('%Y-%m', cc.FechaInicio)             -- Agrupación por mes y año
-        ORDER BY 
-            MesAnio ASC                                   -- Ordenar de forma ascendente
-    """)
+        INNER JOIN 
+            Contratistas c
+        ON
+            cc.IDContratistas = c.ID
+        """
+    )
 
-    rows = cursor.fetchall()
+    rendimiento = cursor.fetchall()
 
-    # Convertir los resultados a un formato legible
-    resultado = [
-        {
-            "Mes": row[0],  # Mes y año en formato YYYY-MM
-            "TotalPlanificado": row[1],  # Suma de horas planificadas
-            "TotalEjecutado": row[2],  # Suma de horas ejecutadas
-            "Cumplimiento": (row[2] / row[1]) * 100 if row[1] > 0 else 0  # Calcular el porcentaje
-        }
-        for row in rows
-    ]
+    if not rendimiento:
+        raise HTTPException(status_code=404, detail="Contratista no encontrado o sin datos de rendimiento")
 
-    conn.close()
+    # Convertir el resultado en un formato de respuesta legible
+    rendimiento_data = []
+    for row in rendimiento:
+        planificado = int(row[0]) if row[0] is not None else 0
+        ejecutado = int(row[1]) if row[1] is not None else 0
+        cumplimiento = (ejecutado / planificado) * 100 if planificado > 0 else 0
 
-    return resultado
+        rendimiento_data.append({
+            "Planificado": planificado,
+            "Ejecutado": ejecutado,
+            "Cumplimiento": cumplimiento,
+            "EvalFinal": row[2],  # EvalFinal está en la posición 2
+            "Contratista": row[3] # NombreContr está en la posición 3
+        })
+
+    return rendimiento_data
+
 
 @router.get('/seguimientoContratist/{idContratist}')
 def get_contratist(idContratist: int):
