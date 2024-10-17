@@ -6,5 +6,7 @@ class Incendios(BaseModel):
     Planificado :str
     Ejecutado :str
     
+    
 class IncendiosResponse(Incendios):
     IDIncendio: int
+    Porcentaje : str 
