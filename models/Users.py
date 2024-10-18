@@ -7,6 +7,10 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
+    UID : str
+    Code : str
+    Status : str
+    
 
 
 class UserResponse(UserBase):
