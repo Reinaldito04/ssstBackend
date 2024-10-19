@@ -10,6 +10,7 @@ from routers.Desviaciones import router as DesviacionRouter
 from routers.Capacitacion import router as CapacitacionRouter
 from routers.Cronograma import router as CronogramaRouter
 from routers.Incendios import router as IncendioRouter
+from routers.Information import router as InformationRouter
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -27,6 +28,7 @@ app.include_router(DesviacionRouter)
 app.include_router(CapacitacionRouter)
 app.include_router(CronogramaRouter)
 app.include_router(IncendioRouter)
+app.include_router(InformationRouter)
 app.mount("/File", StaticFiles(directory="File"), name="File")
 
 app.add_middleware(
